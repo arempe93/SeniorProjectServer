@@ -33,15 +33,16 @@ class User < ActiveRecord::Base
 
 		self.api_token = (0...30).map { char_set[rand(char_set.length)] }.join
 		self.confirmation_token = (0...30).map { char_set[rand(char_set.length)] }.join
+		self.confirmation_sent_at = DateTime.now
 	end
 
 	## Class Functions
 	def self.confirm(token)
 
-		user = User.where confirmation_token: token
+		user = User.find_by confirmation_token: token
 
 		# if there is no user with the token, return false
-		unless user return false
+		return false unless user
 
 		# confirm user and return success of saving
 		user.confirmed_at = DateTime.now
