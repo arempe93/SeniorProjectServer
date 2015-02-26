@@ -26,6 +26,9 @@ class User < ActiveRecord::Base
 	## Relationships
 
 	## Functions
+	def confirmed?
+		confirmed_at
+	end
 
 	## Callback Functions
 	def generate_tokens
