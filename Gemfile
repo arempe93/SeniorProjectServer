@@ -11,6 +11,9 @@ gem 'sinatra-activerecord'
 # Using postgres as the DBMS
 gem 'pg'
 
+# Using Pony to send emails
+gem 'pony'
+
 # Using require all for easy local Sinatra requires
 gem 'require_all'
 
