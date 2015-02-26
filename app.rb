@@ -19,12 +19,10 @@ end
 
 get '/confirm/error/?' do
 
-	error = "<%= 'ERROR' %>"
-	erb error
+	erb :'confirmations/error'
 end
 
 get '/confirm/success/?' do
 
-	success = "<%= 'SUCCESS' %>"
-	erb success
+	erb :'confirmations/success'
 end

@@ -2,11 +2,13 @@
 body {
 
 	background-color: #ebebeb;
+	color: #333;
 }
 
 h1, h2, h3, h4 {
 
 	font-family: 'Lato', sans-serif;
+	color: #333;
 }
 
 h1 {
@@ -19,4 +21,57 @@ h2 {
 
 h3 {
 	font-weight: 700;
+}
+
+/* CARD */
+.card.top {
+
+	margin-top: 25vh;
+}
+
+.card > h1 {
+
+	background-color: #ccc;
+	color: #fff;
+
+	margin: 0;
+	padding: 1em 0.8em;
+
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+.card.red > h1 {
+
+	background-color: #9f3c3c;
+}
+
+.card.green > h1 {
+
+	background-color: #3d9f68;
+}
+
+.card > h1 > i {
+
+	margin-right: 1em;
+}
+
+.card > div {
+
+	background-color: #fff;
+
+	box-shadow: 0px 1px 2px #aaa;
+
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+
+.card > div > .text {
+
+	padding: 1.8em;
+}
+
+.text > h2:first-child {
+
+	margin-top: 0;
 }
