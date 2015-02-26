@@ -14,8 +14,9 @@
 
 class User < ActiveRecord::Base
 
-	## Callbacks
+	## Callback
 	after_create :generate_tokens
+	after_create :send_confirmation
 
 	## Validations
 	validates :email, presence: { message: 'An account with this email already exists' }, uniqueness: { message: 'Please enter an email address' }
@@ -25,6 +26,9 @@ class User < ActiveRecord::Base
 	## Relationships
 
 	## Functions
+	def confirmed?
+		confirmed_at
+	end
 
 	## Callback Functions
 	def generate_tokens
@@ -34,6 +38,10 @@ class User < ActiveRecord::Base
 		self.api_token = (0...30).map { char_set[rand(char_set.length)] }.join
 		self.confirmation_token = (0...30).map { char_set[rand(char_set.length)] }.join
 		self.confirmation_sent_at = DateTime.now
+	end
+
+	def send_confirmation
+		UserConfirmationMailer.send_confirmation_email(self)
 	end
 
 	## Class Functions
