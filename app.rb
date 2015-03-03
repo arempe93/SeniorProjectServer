@@ -22,7 +22,7 @@ get '/confirm/?' do
 	end
 end
 
-get '/testcallback/?'
+get '/testcallback/?' do
 
 	@auth = request.env
 
