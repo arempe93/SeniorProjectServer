@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'sinatra/activerecord'
+require 'omniauth-google-oauth2'
 require 'require_all'
 
 require_relative 'config/environments'
