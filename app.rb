@@ -22,6 +22,13 @@ get '/confirm/?' do
 	end
 end
 
+get '/testcallback/?'
+
+	@auth = request.env
+
+	erb :auth
+end
+
 get '/confirm/error/?' do
 
 	erb :'confirmations/error'
