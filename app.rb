@@ -3,8 +3,6 @@ require 'sinatra/activerecord'
 require 'omniauth-google-oauth2'
 require 'require_all'
 
-set :environment, :development
-
 require_relative 'config/environments'
 
 require_all 'mailers'
