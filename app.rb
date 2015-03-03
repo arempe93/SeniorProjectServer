@@ -13,7 +13,7 @@ get '/' do
 	erb :home
 end
 
-post '/auth/google_oauth2/callback' do
+get '/auth/google_oauth2/callback' do
 
 	auth = request.env['omniauth.auth']
 
