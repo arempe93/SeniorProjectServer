@@ -20,6 +20,10 @@ gem 'require_all'
 # For some commenting assistance
 gem 'annotate'
 
+# Use omniauth to authenticate logins
+gem 'omniauth'
+gem 'omniauth-google-oauth2'
+
 group :development do
 	# Using shotgun for development friendly server testing
 	gem 'shotgun'
