@@ -13,13 +13,6 @@ get '/' do
 	erb :home
 end
 
-get '/auth/google_oauth2/callback' do
-
-	auth = request.env['omniauth.auth']
-
-	erb :auth
-end
-
 get '/confirm/?' do
 	
 	if User.confirm params[:token]

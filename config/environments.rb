@@ -9,6 +9,6 @@ configure :development, :production do
 
 	use Rack::Session::Cookie
 	use OmniAuth::Builder do
-		provider :google_oauth2, ENV['GOOGLE_PROJECT_ID'], ENV['GOOGLE_PROJECT_SECRET']
+		provider :google_oauth2, ENV['GOOGLE_PROJECT_ID'], ENV['GOOGLE_PROJECT_SECRET'], { state: 'i32jhj4k23jkbjkdbka' }
 	end
 end

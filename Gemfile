@@ -21,7 +21,7 @@ gem 'require_all'
 gem 'annotate'
 
 # Use omniauth to authenticate logins
-gem 'omniauth'
+gem 'omniauth-oauth2'
 gem 'omniauth-google-oauth2'
 
 group :development do

@@ -93,8 +93,8 @@ PLATFORMS
 DEPENDENCIES
   activerecord
   annotate
-  omniauth
   omniauth-google-oauth2
+  omniauth-oauth2
   pg
   pony
   require_all
