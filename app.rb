@@ -65,5 +65,14 @@ end
 
 get '/books/find/:isbn' do
 
-	BookScraper.find_book(params[:isbn]).to_json
+	book = nil
+	isbn = params[:isbn]
+
+	if isbn.length == 13
+		book = Book.find_by isbn_13: isbn
+	else
+		book = Book.find_by isbn_10: isbn
+	end
+
+	book ? book.to_json : BookScraper.find_book(isbn).to_json
 end
