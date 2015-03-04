@@ -17,7 +17,7 @@ get '/login/?' do
 	unless session[:user]
 		redirect to '/auth/google_oauth2'
 	else
-		redirect to '/welcome'
+		redirect to '/userinfo'
 	end
 end
 
@@ -30,11 +30,12 @@ get '/auth/:provider/callback/?' do
 
 	session[:user] = User.create_from_oauth(auth) unless session[:user]
 
-	redirect to '/welcome'
+	redirect to '/userinfo'
 end
 
-get '/welcome/?' do
+get '/userinfo/?' do
+	content_type :json
 
 	@user = User.find session[:user]
-	erb :auth
+	@user.to_json
 end
