@@ -35,6 +35,6 @@ end
 
 get '/welcome/?' do
 
-	@user = User.find sessions['user']
+	@user = User.find session[:user]
 	erb :auth
 end
