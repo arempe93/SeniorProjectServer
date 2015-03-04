@@ -24,7 +24,7 @@ end
 
 get '/auth/:provider/callback/?' do
 
-	request.env['omniauth.auth'].info.to_hash.inspect
+	request.env['omniauth.auth'].to_hash.inspect
 end
 
 get '/confirm/error/?' do
