@@ -14,7 +14,7 @@ end
 
 get '/login/?' do
 
-	unless sessions['user']
+	unless session[:user]
 		redirect to '/auth/google_oauth2'
 	else
 		redirect to '/welcome'
@@ -25,10 +25,12 @@ get '/auth/:provider/callback/?' do
 
 	auth = request.env['omniauth.auth'].to_hash
 
-	sessions['user'] = nil
-	sessions['user'] = User.find_by uid: auth['uid']
+	session[:user] = nil
+	session[:user] = User.find_by uid: auth['uid']
 
-	sessions['user'] = User.create_from_oauth(auth) unless sessions['user']
+	session[:user] = User.create_from_oauth(auth) unless session[:user]
+
+	redirect to '/welcome'
 end
 
 get '/welcome/?' do
