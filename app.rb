@@ -49,8 +49,12 @@ end
 get '/userinfo/?' do
 	content_type :json
 
-	@user = User.find session[:user]
-	@user.to_json
+	if session[:user]
+		@user = User.find session[:user]
+		@user.to_json
+	else
+		redirect to '/login'
+	end
 end
 
 get '/autherror/?' do
@@ -64,6 +68,7 @@ end
 ###
 
 get '/books/find/:isbn' do
+	content_type :json
 
 	book = nil
 	isbn = params[:isbn]
