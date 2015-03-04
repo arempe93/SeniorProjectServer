@@ -22,6 +22,10 @@ class User < ActiveRecord::Base
 
 	## Class Functions
 	def self.create_from_oauth(auth)
+
+		# Don't allow non-McDaniel emails
+		return nil unless auth['info']['email'].end_with? 'mcdaniel.edu'
+
 		User.create uid: auth['uid'], 
 			name: auth['info']['name'], email: auth['info']['email'],
 			api_token: auth['credentials']['token'],

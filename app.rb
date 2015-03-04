@@ -21,16 +21,24 @@ get '/login/?' do
 	end
 end
 
-get '/auth/:provider/callback/?' do
+get '/auth/google_oauth2/callback/?' do
 
+	# Get omniauth hash
 	auth = request.env['omniauth.auth'].to_hash
 
+	# Clear session and find user with return uid
 	session[:user] = nil
 	session[:user] = User.find_by uid: auth['uid']
 
+	# If uid wasn't found, create a new user for it
 	session[:user] = User.create_from_oauth(auth) unless session[:user]
 
-	redirect to '/userinfo'
+	# If session is created, return user info. If it wasn't it's a non-mcdaniel email
+	if session[:user]
+		redirect to '/userinfo'
+	else
+		redirect to '/autherror'
+	end
 end
 
 get '/userinfo/?' do
@@ -38,4 +46,10 @@ get '/userinfo/?' do
 
 	@user = User.find session[:user]
 	@user.to_json
+end
+
+get '/autherror/?' do
+	content_type :json
+
+	{ error: 'Authentication Error', message: 'You cannot sign up without a McDaniel email address' }.to_json
 end
