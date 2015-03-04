@@ -4,8 +4,13 @@ require 'omniauth-google-oauth2'
 require 'require_all'
 
 require_relative 'config/environments'
+require_relative 'lib/book_scraper'
 
 require_all 'models'
+
+###
+#	User Authentication
+###
 
 get '/' do
 
@@ -52,4 +57,13 @@ get '/autherror/?' do
 	content_type :json
 
 	{ error: 'Authentication Error', message: 'You cannot sign up without a McDaniel email address' }.to_json
+end
+
+###
+#	Books
+###
+
+get '/books/find/:isbn' do
+
+	BookScraper.find_book(params[:isbn]).to_json
 end

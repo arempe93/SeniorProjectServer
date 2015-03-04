@@ -27,6 +27,9 @@ gem 'omniauth-google-oauth2'
 # Use Rack server version that doesn't crash Sinatra error reporting
 gem 'rack', '1.5.2'
 
+# Use Nokogiri to scrape HTML pages
+gem 'nokogiri'
+
 group :development do
 	# Using shotgun for development friendly server testing
 	gem 'shotgun'
