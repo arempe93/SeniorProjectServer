@@ -22,11 +22,9 @@ get '/confirm/?' do
 	end
 end
 
-get '/testcallback/?' do
+get '/auth/:provider/callback/?' do
 
-	@auth = request.env
-
-	erb :auth
+	request.env['omniauth.auth'].info.to_hash.inspect
 end
 
 get '/confirm/error/?' do
