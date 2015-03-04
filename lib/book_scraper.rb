@@ -13,6 +13,8 @@ class BookScraper
 
 		book_info[:title] = book_page.css('div.bookinfo h2').first.content
 
+		book_info[:image] = book_page.css('div.thumbnail img').first['src']
+
 		book_page.css('div.bookinfo p').each do |attrib|
 
 			attributes = attrib.content.split(': ')
@@ -22,7 +24,7 @@ class BookScraper
 			key = key.gsub /-/, '_'
 			key = key.gsub /list_/, ''		# Remove list_ for price attribute
 
-			book_info[key.to_sym] = attributes[1].gsub /$/, ''
+			book_info[key.to_sym] = attributes[1].gsub /\$/, ''
 		end
 
 		# Return attribute hash
