@@ -1,8 +1,14 @@
 configure :development, :production do
 	
+	# Database connection
 	db = YAML.load(ERB.new(File.read(File.join("config","database.yml"))).result)
 	ActiveRecord::Base.establish_connection(db[settings.environment.to_s])
 
-	set :partial_template_engine, :erb
-	enable :partial_underscores
+	# Omniauth
+	enable :sessions
+
+	use Rack::Session::Cookie
+	use OmniAuth::Builder do
+		provider :google_oauth2, ENV['GOOGLE_PROJECT_ID'], ENV['GOOGLE_PROJECT_SECRET'], { provider_ignores_state: true }
+	end
 end

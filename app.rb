@@ -1,28 +1,55 @@
 require 'sinatra'
 require 'sinatra/activerecord'
+require 'omniauth-google-oauth2'
 require 'require_all'
 
 require_relative 'config/environments'
 
-require_all 'mailers'
 require_all 'models'
 
-get '/confirm/?' do
-	
-	if User.confirm params[:token]
-		redirect to('/confirm/success') 
-	
-	else redirect to('/confirm/error')
+get '/' do
+
+	erb :home
+end
+
+get '/login/?' do
+
+	unless session[:user]
+		redirect to '/auth/google_oauth2'
+	else
+		redirect to '/userinfo'
 	end
 end
 
+get '/auth/google_oauth2/callback/?' do
 
-get '/confirm/error/?' do
+	# Get omniauth hash
+	auth = request.env['omniauth.auth'].to_hash
 
-	erb :'confirmations/error'
+	# Clear session and find user with return uid
+	session[:user] = nil
+	session[:user] = User.find_by uid: auth['uid']
+
+	# If uid wasn't found, create a new user for it
+	session[:user] = User.create_from_oauth(auth) unless session[:user]
+
+	# If session is created, return user info. If it wasn't it's a non-mcdaniel email
+	if session[:user]
+		redirect to '/userinfo'
+	else
+		redirect to '/autherror'
+	end
 end
 
-get '/confirm/success/?' do
+get '/userinfo/?' do
+	content_type :json
 
-	erb :'confirmations/success'
+	@user = User.find session[:user]
+	@user.to_json
+end
+
+get '/autherror/?' do
+	content_type :json
+
+	{ error: 'Authentication Error', message: 'You cannot sign up without a McDaniel email address' }.to_json
 end

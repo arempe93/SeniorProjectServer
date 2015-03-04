@@ -20,6 +20,13 @@ gem 'require_all'
 # For some commenting assistance
 gem 'annotate'
 
+# Use omniauth to authenticate logins
+gem 'omniauth-oauth2'
+gem 'omniauth-google-oauth2'
+
+# Use Rack server version that doesn't crash Sinatra error reporting
+gem 'rack', '1.5.2'
+
 group :development do
 	# Using shotgun for development friendly server testing
 	gem 'shotgun'
