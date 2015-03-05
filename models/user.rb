@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
 	## Validations
 
 	## Relationships
+	has_many :wanted_books
 
 	## Functions
 
