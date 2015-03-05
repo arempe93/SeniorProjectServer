@@ -17,11 +17,16 @@ helpers do
 	def protect_request(key)
 		user = User.find_by(api_token: key)
 
-		user ? user : show_error('Not Authenticated', 'The API key is missing or invalid')
+		user ? user : show_error('Not Authenticated', 'The API key is missing or invalid', 401)
 	end
 
-	def show_error(title, message)
-		redirect to "/error?title=#{CGI.escape title}&message=#{CGI.escape message}"
+	def show_error(title, message, status)
+		
+		session[:error_title] = title
+		session[:error_message] = message
+		session[:error_status] = status
+
+		redirect "/error"
 	end
 end
 
@@ -79,7 +84,7 @@ get '/users/:id/?' do
 
 	user = User.find_by id: params[:id]
 
-	user ? user.to_json : show_error('Not Found', 'There is no user with the specified UID')
+	user ? user.to_json : show_error('Not Found', 'There is no user with the specified UID', 404)
 end
 
 ###
@@ -110,7 +115,7 @@ get '/books/:id' do
 
 	book = Book.find_by id: params[:id]
 
-	book ? book.to_json : show_error('Not Found', 'There is no book with that id')
+	book ? book.to_json : show_error('Not Found', 'There is no book with that id', 404)
 end
 
 ###
@@ -124,7 +129,7 @@ get '/users/:id/wanted_books' do
 
 	# Get user and return wanted books
 	user = User.find_by id: params[:id]
-	user ? user.desired_books.to_json : show_error('Not Found', 'There is no user with that id')
+	user ? user.desired_books.to_json : show_error('Not Found', 'There is no user with that id', 404)
 end
 
 post '/users/:id/wanted_books' do
@@ -135,7 +140,7 @@ post '/users/:id/wanted_books' do
 	# Ensure user making the request is the same as the user adding the book
 	user = nil if User.find_by(id: params[:id]) != user
 
-	user ? WantedBook.create(user_id: user.id, book_id: params[:book]) : show_error('Not Authenticated', 'The API key is missing or invalid or does not match the affected user')
+	user ? WantedBook.create(user_id: user.id, book_id: params[:book]) : show_error('Not Authenticated', 'The API key is missing or invalid or does not match the affected user', 401)
 end
 
 ###
@@ -144,5 +149,7 @@ end
 
 get '/error' do
 
-	{ error: { title: params['title'], message: params[:message] } }.to_json
+	status session[:error_status]
+
+	{ error: { title: session[:error_title], message: session[:error_message] } }.to_json
 end
