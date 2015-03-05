@@ -113,6 +113,18 @@ get '/books/find/:isbn' do
 	book.to_json
 end
 
+get '/books/:id' do
+	content_type :json
+
+	book = Book.find_by id: params[:id]
+
+	if book
+		book.to_json
+	else
+		show_error 'Not Found', 'There is no book with that id'
+	end
+end
+
 ###
 #	Errors
 ###
