@@ -9,6 +9,23 @@ require_relative 'lib/book_scraper'
 require_all 'models'
 
 ###
+#	Helpers
+###
+
+helpers do
+
+	def protect_request(key)
+		unless User.find_by(api_token: key)
+			show_error 'Not Authorized', 'That API key is not registered'
+		end
+	end
+
+	def show_error(title, message)
+		redirect to "/error?title=#{CGI.escape title}&message=#{CGI.escape message}"
+	end
+end
+
+###
 #	User Authentication
 ###
 
@@ -57,10 +74,16 @@ get '/userinfo/?' do
 	end
 end
 
-get '/autherror/?' do
+get '/users/:uid/?' do
 	content_type :json
 
-	{ error: 'Authentication Error', message: 'You cannot sign up without a McDaniel email address' }.to_json
+	user = User.find_by uid: params[:uid]
+
+	if user
+		user.to_json
+	else
+		show_error 'Not Found', 'There is no user with the specified UID'
+	end
 end
 
 ###
@@ -70,6 +93,10 @@ end
 get '/books/find/:isbn' do
 	content_type :json
 
+	# Ensure request is authenticated
+	protect_request(params[:key])
+
+	# Find the book
 	book = nil
 	isbn = params[:isbn]
 
@@ -79,5 +106,18 @@ get '/books/find/:isbn' do
 		book = Book.find_by isbn_10: isbn
 	end
 
-	book ? book.to_json : BookScraper.find_book(isbn).to_json
+	# Create the book if it doesn't exist
+	book = Book.create BookScraper.find_book(isbn) unless book
+
+	# Return the book details
+	book.to_json
+end
+
+###
+#	Errors
+###
+
+get '/error' do
+
+	{ error: { title: params['title'], message: params[:message] } }.to_json
 end
