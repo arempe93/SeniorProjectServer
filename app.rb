@@ -143,6 +143,16 @@ post '/users/:id/wanted_books' do
 	user ? WantedBook.create(user_id: user.id, book_id: params[:book]) : show_error('Not Authenticated', 'The API key is missing or invalid or does not match the affected user', 401)
 end
 
+get '/books/:id/desirers/?' do
+
+	# Ensure this request is authenticated
+	protect_request params[:key]
+
+	book = Book.find_by id: params[:id]
+
+	book ? book.desirers.to_json : show_error('Not Found', 'There is no book with that id', 404)
+end
+
 ###
 #	Errors
 ###
