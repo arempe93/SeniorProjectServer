@@ -15,13 +15,18 @@ require_all 'models'
 helpers do
 
 	def protect_request(key)
-		unless User.find_by(api_token: key)
-			show_error 'Not Authorized', 'That API key is not registered'
-		end
+		user = User.find_by(api_token: key)
+
+		user ? user : show_error('Not Authenticated', 'The API key is missing or invalid', 401)
 	end
 
-	def show_error(title, message)
-		redirect to "/error?title=#{CGI.escape title}&message=#{CGI.escape message}"
+	def show_error(title, message, status)
+		
+		session[:error_title] = title
+		session[:error_message] = message
+		session[:error_status] = status
+
+		redirect "/error"
 	end
 end
 
@@ -74,16 +79,12 @@ get '/userinfo/?' do
 	end
 end
 
-get '/users/:uid/?' do
+get '/users/:id/?' do
 	content_type :json
 
-	user = User.find_by uid: params[:uid]
+	user = User.find_by id: params[:id]
 
-	if user
-		user.to_json
-	else
-		show_error 'Not Found', 'There is no user with the specified UID'
-	end
+	user ? user.to_json : show_error('Not Found', 'There is no user with the specified UID', 404)
 end
 
 ###
@@ -94,17 +95,13 @@ get '/books/find/:isbn' do
 	content_type :json
 
 	# Ensure request is authenticated
-	protect_request(params[:key])
+	protect_request params[:key]
 
 	# Find the book
 	book = nil
 	isbn = params[:isbn]
 
-	if isbn.length == 13
-		book = Book.find_by isbn_13: isbn
-	else
-		book = Book.find_by isbn_10: isbn
-	end
+	book = isbn.length == 13 ? Book.find_by(isbn_13: isbn) : Book.find_by(isbn_10: isbn)
 
 	# Create the book if it doesn't exist
 	book = Book.create BookScraper.find_book(isbn) unless book
@@ -118,11 +115,42 @@ get '/books/:id' do
 
 	book = Book.find_by id: params[:id]
 
-	if book
-		book.to_json
-	else
-		show_error 'Not Found', 'There is no book with that id'
-	end
+	book ? book.to_json : show_error('Not Found', 'There is no book with that id', 404)
+end
+
+###
+#	Wanted Books
+###
+
+get '/users/:id/wanted_books' do
+
+	# Ensure this request is authenticated
+	protect_request params[:key]
+
+	# Get user and return wanted books
+	user = User.find_by id: params[:id]
+	user ? user.desired_books.to_json : show_error('Not Found', 'There is no user with that id', 404)
+end
+
+post '/users/:id/wanted_books' do
+
+	# Ensure this request is authenticated
+	user = protect_request params[:key]
+
+	# Ensure user making the request is the same as the user adding the book
+	user = nil if User.find_by(id: params[:id]) != user
+
+	user ? WantedBook.create(user_id: user.id, book_id: params[:book]) : show_error('Not Authenticated', 'The API key is missing or invalid or does not match the affected user', 401)
+end
+
+get '/books/:id/desirers/?' do
+
+	# Ensure this request is authenticated
+	protect_request params[:key]
+
+	book = Book.find_by id: params[:id]
+
+	book ? book.desirers.to_json : show_error('Not Found', 'There is no book with that id', 404)
 end
 
 ###
@@ -131,5 +159,7 @@ end
 
 get '/error' do
 
-	{ error: { title: params['title'], message: params[:message] } }.to_json
+	status session[:error_status]
+
+	{ error: { title: session[:error_title], message: session[:error_message] } }.to_json
 end
