@@ -79,7 +79,7 @@ get '/users/:id/?' do
 
 	user = User.find_by id: params[:id]
 
-	user ? user.to_json : show_error 'Not Found', 'There is no user with the specified UID'
+	user ? user.to_json : show_error('Not Found', 'There is no user with the specified UID')
 end
 
 ###
@@ -125,6 +125,17 @@ get '/users/:id/wanted_books' do
 	# Get user and return wanted books
 	user = User.find_by id: params[:id]
 	user ? user.desired_books.to_json : show_error('Not Found', 'There is no user with that id')
+end
+
+post '/users/:id/wanted_books' do
+
+	# Ensure this request is authenticated
+	user = protect_request params[:key]
+
+	# Ensure user making the request is the same as the user adding the book
+	user = nil if User.find_by(id: params[:id]) != user
+
+	user ? WantedBook.create(user_id: user.id, book_id: params[:book]) : show_error('Not Authenticated', 'The API key is missing or invalid or does not match the affected user')
 end
 
 ###
