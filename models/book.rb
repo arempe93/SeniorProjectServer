@@ -25,6 +25,9 @@ class Book < ActiveRecord::Base
 	has_many :wanted_books
 	has_many :desirers, through: :wanted_books, source: :user
 
+	has_many :owned_books
+	has_many :owners, through: :owned_books, source: :user
+
 	## Functions
 
 	## Class Functions
