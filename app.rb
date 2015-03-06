@@ -64,7 +64,7 @@ get '/auth/google_oauth2/callback/?' do
 	if session[:user]
 		redirect to '/userinfo'
 	else
-		redirect to '/autherror'
+		show_error('Not Authenticated', 'Non-McDaniel email addresses are forbidden', 401)
 	end
 end
 
@@ -147,7 +147,7 @@ end
 
 get '/books/:id/desirers/?' do
 	content_type :json
-	
+
 	# Ensure this request is authenticated
 	protect_request params[:key]
 
