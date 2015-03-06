@@ -123,6 +123,7 @@ end
 ###
 
 get '/users/:id/wanted_books' do
+	content_type :json
 
 	# Ensure this request is authenticated
 	protect_request params[:key]
@@ -133,6 +134,7 @@ get '/users/:id/wanted_books' do
 end
 
 post '/users/:id/wanted_books' do
+	content_type :json
 
 	# Ensure this request is authenticated
 	user = protect_request params[:key]
@@ -144,7 +146,8 @@ post '/users/:id/wanted_books' do
 end
 
 get '/books/:id/desirers/?' do
-
+	content_type :json
+	
 	# Ensure this request is authenticated
 	protect_request params[:key]
 
@@ -158,6 +161,7 @@ end
 ###
 
 get '/error' do
+	content_type :json
 
 	status session[:error_status]
 
