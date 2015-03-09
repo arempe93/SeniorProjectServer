@@ -183,7 +183,7 @@ post '/users/:id/owned_books' do
 	user ? OwnedBook.create(user_id: user.id, book_id: params[:book]) : show_error('Not Authenticated', 'The API key is missing or invalid or does not match the affected user', 401)
 end
 
-get '/books/:id/desirers/?' do
+get '/books/:id/owners/?' do
 	content_type :json
 
 	# Ensure this request is authenticated
