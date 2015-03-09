@@ -157,6 +157,44 @@ get '/books/:id/desirers/?' do
 end
 
 ###
+#	Owned Books
+###
+
+get '/users/:id/owned_books' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	protect_request params[:key]
+
+	# Get user and return wanted books
+	user = User.find_by id: params[:id]
+	user ? user.possessed_books.to_json : show_error('Not Found', 'There is no user with that id', 404)
+end
+
+post '/users/:id/owned_books' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	user = protect_request params[:key]
+
+	# Ensure user making the request is the same as the user adding the book
+	user = nil if User.find_by(id: params[:id]) != user
+
+	user ? OwnedBook.create(user_id: user.id, book_id: params[:book]) : show_error('Not Authenticated', 'The API key is missing or invalid or does not match the affected user', 401)
+end
+
+get '/books/:id/desirers/?' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	protect_request params[:key]
+
+	book = Book.find_by id: params[:id]
+
+	book ? book.owners.to_json : show_error('Not Found', 'There is no book with that id', 404)
+end
+
+###
 #	Errors
 ###
 
