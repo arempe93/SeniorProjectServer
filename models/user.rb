@@ -23,7 +23,13 @@ class User < ActiveRecord::Base
 	has_many :owned_books
 	has_many :possessed_books, through: :owned_books, source: :book
 
+	has_many :sent_trades, class_name: 'Trade', foreign_key: 'sender_id'
+	has_many :received_trades, class_name: 'Trade', foreign_key: 'receiver_id'
+
 	## Functions
+	def trades
+		sent_trades + received_trades
+	end
 
 	## Class Functions
 	def self.create_from_oauth(auth)

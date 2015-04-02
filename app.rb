@@ -195,6 +195,22 @@ get '/books/:id/owners/?' do
 end
 
 ###
+#	Trades
+###
+
+get '/users/:id/trades/?' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	protect_request params[:key]
+
+	# Find user
+	user = User.find_by id: params[:id]
+
+	user ? user.trades.to_json : show_error('Not Found', 'There is no user with that id', 404)
+end
+
+###
 #	Errors
 ###
 
