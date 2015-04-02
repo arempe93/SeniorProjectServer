@@ -168,7 +168,7 @@ get '/users/:id/owned_books' do
 
 	# Get user and return wanted books
 	user = User.find_by id: params[:id]
-	user ? user.possessed_books.to_json : show_error('Not Found', 'There is no user with that id', 404)
+	user ? user.owned_books.to_json : show_error('Not Found', 'There is no user with that id', 404)
 end
 
 post '/users/:id/owned_books' do

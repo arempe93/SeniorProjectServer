@@ -30,4 +30,8 @@ class OwnedBook < ActiveRecord::Base
 
 		books
 	end
+
+	def as_json(options = {})
+		super( :include => :book )
+	end
 end
