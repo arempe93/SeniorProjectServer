@@ -20,4 +20,14 @@ class OwnedBook < ActiveRecord::Base
 	## Functions
 
 	## Class Functions
+	def self.all_for_array(arr)
+
+		books = []
+
+		for book_id in arr
+			books << self.find(book_id)
+		end
+
+		books
+	end
 end
