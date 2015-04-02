@@ -168,7 +168,7 @@ get '/users/:id/owned_books' do
 
 	# Get user and return wanted books
 	user = User.find_by id: params[:id]
-	
+
 	user ? user.owned_books.to_json : show_error('Not Found', 'There is no user with that id', 404)
 end
 
@@ -191,7 +191,7 @@ delete '/owned_books/:id/?' do
 	user = protect_request params[:key]
 
 	# Find book record
-	book = OwnedBook.find_by params[:id]
+	book = OwnedBook.find_by id: params[:id]
 
 	# Ensure user making the request is the same as the user deleting the book
 	user = nil if book.user != user
