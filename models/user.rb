@@ -20,6 +20,9 @@ class User < ActiveRecord::Base
 	has_many :wanted_books
 	has_many :desired_books, through: :wanted_books, source: :book
 
+	has_many :owned_books
+	has_many :possessed_books, through: :owned_books, source: :book
+
 	## Functions
 
 	## Class Functions
