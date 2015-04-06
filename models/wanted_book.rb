@@ -18,6 +18,19 @@ class WantedBook < ActiveRecord::Base
 	belongs_to :book
 
 	## Functions
+	def as_json(options = {})
+		super( :include => :book )
+	end
 
 	## Class Functions
+	def self.all_for_array(arr)
+
+		books = []
+
+		for book_id in arr
+			books << self.find(book_id)
+		end
+
+		books
+	end
 end

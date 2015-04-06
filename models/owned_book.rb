@@ -18,6 +18,9 @@ class OwnedBook < ActiveRecord::Base
 	belongs_to :book
 
 	## Functions
+	def as_json(options = {})
+		super( :include => :book )
+	end
 
 	## Class Functions
 	def self.all_for_array(arr)
@@ -29,9 +32,5 @@ class OwnedBook < ActiveRecord::Base
 		end
 
 		books
-	end
-
-	def as_json(options = {})
-		super( :include => :book )
 	end
 end
