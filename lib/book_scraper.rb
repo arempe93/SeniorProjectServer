@@ -20,9 +20,11 @@ class BookScraper
 			attributes = attrib.content.split(': ')
 
 			key = attributes[0].downcase
-			key = key.gsub /\s/, '_'		# Replace spaces and dashes with underscores
+			key = key.gsub /\s/, '_'			# Replace spaces and dashes with underscores
 			key = key.gsub /-/, '_'
-			key = key.gsub /list_/, ''		# Remove list_ for price attribute
+			key = key.gsub /list_/, ''			# Remove list_ for price attribute
+			
+			key = 'authors' if key == 'author'	# Pluralize author key name if only one
 
 			book_info[key.to_sym] = attributes[1].gsub /\$/, ''
 		end
