@@ -26,7 +26,12 @@ class Trade < ActiveRecord::Base
 	belongs_to :counter_offer, class_name: 'Trade'
 
 	## Functions
-	
+	def as_json(options = {})
+		super.merge({
+
+			counter_offer: counter_offer.as_json
+		})
+	end
 
 	## Class Functions
 	def self.past_trades_for(trade)
