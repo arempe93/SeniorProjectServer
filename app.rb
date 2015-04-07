@@ -223,15 +223,7 @@ get '/users/:id/trades/?' do
 	# Find user
 	user = User.find_by id: params[:id]
 
-	# Narrow down trades
-	trades = user.trades if user
-
-	if user and params[:accepted]
-
-		trades = trades.where accepted: params[:accepted]
-	end
-
-	trades ? trades.to_json : show_error('Not Found', 'There is no user with that id', 404)
+	user ? user.trades.to_json : show_error('Not Found', 'There is no user with that id', 404)
 end
 
 ###

@@ -30,6 +30,6 @@ OwnedBook.create user_id: 2, book_id: 1
 #	Trades
 ###
 
-Trade.create sender_id: 1, receiver_id: 2, sender_books: [2], receiver_books: [1], sender_extras: 0.0, receiver_extras: 0.0
+Trade.create sender_id: 1, receiver_id: 2, sender_books: [1], receiver_books: [2], sender_extras: 0.0, receiver_extras: 0.0
 Trade.create sender_id: 2, receiver_id: 1, sender_books: [2], receiver_books: [1], sender_extras: 0.0, receiver_extras: 10.0, counter_offer_id: 1
-Trade.create sender_id: 2, receiver_id: 1, sender_books: [2], receiver_books: [1], sender_extras: 0.0, receiver_extras: 5.0, counter_offer_id: 2
+Trade.create sender_id: 2, receiver_id: 1, sender_books: [1], receiver_books: [2], sender_extras: 0.0, receiver_extras: 5.0, counter_offer_id: 2
