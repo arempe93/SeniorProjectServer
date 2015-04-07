@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
 
 	## Functions
 	def trades
-		sent_trades + received_trades
+		Trade.where "sender_id = #{id} OR receiver_id = #{id}"
 	end
 
 	## Class Functions
