@@ -32,10 +32,6 @@ class User < ActiveRecord::Base
 		trades = result.map { |row| Trade.instantiate(row) }
 	end
 
-	def top_level_trades
-
-	end
-
 	## Class Functions
 	def self.create_from_oauth(auth)
 
