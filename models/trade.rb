@@ -37,7 +37,6 @@ class Trade < ActiveRecord::Base
 			receiver_extras: receiver_extras,
 			accepted: accepted,
 			counter_offer: counter_offer.as_json
-		
 		}
 	end
 
