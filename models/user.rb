@@ -17,14 +17,14 @@ class User < ActiveRecord::Base
 	## Validations
 
 	## Relationships
-	has_many :wanted_books
+	has_many :wanted_books, dependent: :destroy
 	has_many :desired_books, through: :wanted_books, source: :book
 
-	has_many :owned_books
+	has_many :owned_books, dependent: :destroy
 	has_many :possessed_books, through: :owned_books, source: :book
 
-	has_many :sent_trades, class_name: 'Trade', foreign_key: 'sender_id'
-	has_many :received_trades, class_name: 'Trade', foreign_key: 'receiver_id'
+	has_many :sent_trades, class_name: 'Trade', foreign_key: 'sender_id', dependent: :destroy
+	has_many :received_trades, class_name: 'Trade', foreign_key: 'receiver_id', dependent: :destroy
 
 	## Functions
 	def trades

@@ -23,7 +23,7 @@ class Trade < ActiveRecord::Base
 	belongs_to :sender, class_name: 'User'
 	belongs_to :receiver, class_name: 'User'
 
-	belongs_to :counter_offer, class_name: 'Trade'
+	belongs_to :counter_offer, class_name: 'Trade', dependent: :destroy
 
 	## Functions
 	def as_json(options = {})
