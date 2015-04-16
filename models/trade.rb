@@ -27,10 +27,18 @@ class Trade < ActiveRecord::Base
 
 	## Functions
 	def as_json(options = {})
-		super.merge({
-
+		{
+			id: id,
+			sender: User.find(sender_id).as_json,
+			sender_books: Book.find(sender_books).as_json,
+			sender_extras: sender_extras,
+			receiver: User.find(receiver_id).as_json,
+			receiver_books: Book.find(receiver_books).as_json,
+			receiver_extras: receiver_extras,
+			accepted: accepted,
 			counter_offer: counter_offer.as_json
-		})
+		
+		}
 	end
 
 	## Class Functions
