@@ -43,4 +43,16 @@ class User < ActiveRecord::Base
 			api_token: auth['credentials']['token'],
 			image: auth['info']['image'].split('?')[0]
 	end
+
+	def self.has_any(books)
+
+		result = User.connection.execute "select * from users where id in (select user_id from owned_books where book_id in (#{books.join ", "}));"
+		users = result.map { |row| User.instantiate(row) }
+	end
+
+	def self.wants_any(books)
+
+		result = User.connection.execute "select * from users where id in (select user_id from wanted_books where book_id in (#{books.join ", "}));"
+		users = result.map { |row| User.instantiate(row) }
+	end
 end

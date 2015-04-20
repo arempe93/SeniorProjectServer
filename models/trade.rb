@@ -53,4 +53,26 @@ class Trade < ActiveRecord::Base
 
 		trades
 	end
+
+	def self.suggest_for_user(user)
+
+		suggestions = []
+
+		wanted_books = user.desired_books.map { |book| book.id }
+		owned_books = user.possessed_books.map { |book| book.id }
+
+		# Find users that have books for mutual trades
+
+		User.wants_any(owned_books).delete_if { |user| not User.has_any(wanted_books).include?(user) }.each do |user|
+
+			suggestions << {
+
+				user: user,
+				their_books: OwnedBook.where(book_id: wanted_books, user_id: user.id).map { |row| row.book_id },
+				your_books: WantedBook.where(book_id: owned_books, user_id: user.id).map { |row| row.book_id }
+			}
+		end
+
+		suggestions
+	end
 end

@@ -84,7 +84,7 @@ get '/users/:id/?' do
 
 	user = User.find_by id: params[:id]
 
-	user ? user.to_json : show_error('Not Found', 'There is no user with the specified UID', 404)
+	user ? user.to_json : show_error('Not Found', 'There is no user with the specified ID', 404)
 end
 
 ###
@@ -224,6 +224,18 @@ get '/users/:id/trades/?' do
 	user = User.find_by id: params[:id]
 
 	user ? user.trades.to_json : show_error('Not Found', 'There is no user with that id', 404)
+end
+
+get '/users/:id/trades/suggest/?' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	protect_request params[:key]
+
+	# Find user
+	user = User.find_by id: params[:id]
+
+	user ? Trade.suggest_for_user(user).to_json : show_error('Not Found', 'There is no user with that id', 404)
 end
 
 ###
