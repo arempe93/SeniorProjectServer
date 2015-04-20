@@ -196,7 +196,7 @@ delete '/owned_books/:id/?' do
 	# Ensure user making the request is the same as the user deleting the book
 	user = nil if book.user != user
 
-	user ? book.destroy! : show_error('Not Authenticated', 'The API key is missing or invalid or does not match the affected user', 401)
+	user ? book.destroy! : show_error('Not Authenticated', 'The API key does not match the affected user', 401)
 end
 
 get '/books/:id/owners/?' do
@@ -224,6 +224,31 @@ get '/users/:id/trades/?' do
 	user = User.find_by id: params[:id]
 
 	user ? user.trades.to_json : show_error('Not Found', 'There is no user with that id', 404)
+end
+
+post '/users/:id/trades/?' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	user = protect_request params[:key]
+
+	# Find user
+	trader = User.find_by id: params[:id]
+
+	# Ensure user making the request is the same as trade maker
+	user = nil if trader.id != user.id
+
+	if user
+		Trade.create sender_id: user.id,
+			receiver_id: params[:receiver],
+			sender_books: params[:your_books],
+			receiver_books: params[:their_books],
+			sender_extras: params[:your_extras],
+			receiver_extras: params[:their_extras],
+			counter_offer_id: params[:counter_offer]
+	else
+		show_error('Not Authenticated', 'The API key does not match the affected user', 401)
+	end
 end
 
 get '/users/:id/trades/suggest/?' do
