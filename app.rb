@@ -50,7 +50,11 @@ end
 
 get '/login/success/?' do
 
-	erb :auth
+	if session[:user]
+		erb :auth
+	else
+		redirect to '/login'
+	end
 end
 
 get '/auth/google_oauth2/callback/?' do
