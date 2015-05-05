@@ -96,6 +96,14 @@ get '/users/:id/?' do
 	user ? user.to_json : show_error('Not Found', 'There is no user with the specified ID', 404)
 end
 
+get '/users/login/:username/?' do
+	content_type :json
+
+	user = User.find_by email: params[:username] + "@mcdaniel.edu"
+
+	user ? user.to_json : show_error('Not Found', 'There is no user with that username', 404)
+end
+
 ###
 #	Books
 ###
