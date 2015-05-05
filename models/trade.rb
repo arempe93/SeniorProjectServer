@@ -68,8 +68,8 @@ class Trade < ActiveRecord::Base
 			suggestions << {
 
 				user: user,
-				their_books: OwnedBook.where(book_id: wanted_books, user_id: user.id).map { |row| row.book_id },
-				your_books: WantedBook.where(book_id: owned_books, user_id: user.id).map { |row| row.book_id }
+				their_books: OwnedBook.where(book_id: wanted_books, user_id: user.id).map { |row| row.as_json },
+				your_books: WantedBook.where(book_id: owned_books, user_id: user.id).map { |row| row.as_json }
 			}
 		end
 
