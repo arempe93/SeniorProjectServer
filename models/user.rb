@@ -30,6 +30,7 @@ class User < ActiveRecord::Base
 	def trades
 		result = User.connection.execute("select * from trades t where (sender_id = #{id} or receiver_id = #{id}) and accepted = false and not exists (select 1 from trades n where n.counter_offer_id = t.id);")
 		trades = result.map { |row| Trade.instantiate(row) }
+		trades.delete_if { |trade| trade.sender_id == id }
 	end
 
 	## Class Functions
