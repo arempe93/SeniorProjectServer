@@ -273,8 +273,8 @@ post '/users/:id/trades/?' do
 	if user
 		Trade.create sender_id: user.id,
 			receiver_id: params[:receiver],
-			sender_books: params[:your_book],
-			receiver_books: params[:their_book]
+			sender_books: [params[:your_book]],
+			receiver_books: [params[:their_book]]
 	else
 		show_error('Not Authenticated', 'The API key does not match the affected user', 401)
 	end
