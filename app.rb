@@ -44,8 +44,13 @@ get '/login/?' do
 	unless session[:user]
 		redirect to '/auth/google_oauth2'
 	else
-		redirect to '/userinfo'
+		redirect to '/login/success'
 	end
+end
+
+get '/login/success/?' do
+
+	erb :auth
 end
 
 get '/auth/google_oauth2/callback/?' do
@@ -62,7 +67,7 @@ get '/auth/google_oauth2/callback/?' do
 
 	# If session is created, return user info. If it wasn't it's a non-mcdaniel email
 	if session[:user]
-		redirect to '/userinfo'
+		redirect to '/login/success'
 	else
 		show_error('Not Authenticated', 'Non-McDaniel email addresses are forbidden', 401)
 	end
