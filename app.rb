@@ -101,7 +101,7 @@ get '/users/login/:username/?' do
 
 	user = User.find_by email: params[:username] + "@mcdaniel.edu"
 
-	user ? user.to_json : show_error('Not Found', 'There is no user with that username', 404)
+	user ? { username: params[:username], api_key: user.api_token, id: user.id }.to_json : show_error('Not Found', 'There is no user with that username', 404)
 end
 
 ###
