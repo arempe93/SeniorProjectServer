@@ -173,6 +173,21 @@ get '/books/:id/desirers/?' do
 	book ? book.desirers.to_json : show_error('Not Found', 'There is no book with that id', 404)
 end
 
+delete '/wanted_books/:id/?' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	user = protect_request params[:key]
+
+	# Find book record
+	book = WantedBook.find_by id: params[:id]
+
+	# Ensure user making the request is the same as the user deleting the book
+	user = nil if book.user != user
+
+	user ? book.destroy! : show_error('Not Authenticated', 'The API key does not match the affected user', 401)
+end
+
 ###
 #	Owned Books
 ###
