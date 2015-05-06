@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150306172550) do
+ActiveRecord::Schema.define(version: 20150402155121) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,17 @@ ActiveRecord::Schema.define(version: 20150306172550) do
   create_table "owned_books", force: :cascade do |t|
     t.integer "book_id"
     t.integer "user_id"
+  end
+
+  create_table "trades", force: :cascade do |t|
+    t.integer "sender_id"
+    t.integer "receiver_id"
+    t.integer "sender_books",                             default: [],    array: true
+    t.integer "receiver_books",                           default: [],    array: true
+    t.decimal "sender_extras",    precision: 8, scale: 2, default: 0.0
+    t.decimal "receiver_extras",  precision: 8, scale: 2, default: 0.0
+    t.integer "counter_offer_id"
+    t.boolean "accepted",                                 default: false
   end
 
   create_table "users", force: :cascade do |t|

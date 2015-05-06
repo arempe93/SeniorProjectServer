@@ -44,7 +44,16 @@ get '/login/?' do
 	unless session[:user]
 		redirect to '/auth/google_oauth2'
 	else
-		redirect to '/userinfo'
+		redirect to '/login/success'
+	end
+end
+
+get '/login/success/?' do
+
+	if session[:user]
+		erb :auth
+	else
+		redirect to '/login'
 	end
 end
 
@@ -62,7 +71,7 @@ get '/auth/google_oauth2/callback/?' do
 
 	# If session is created, return user info. If it wasn't it's a non-mcdaniel email
 	if session[:user]
-		redirect to '/userinfo'
+		redirect to '/login/success'
 	else
 		show_error('Not Authenticated', 'Non-McDaniel email addresses are forbidden', 401)
 	end
@@ -84,7 +93,15 @@ get '/users/:id/?' do
 
 	user = User.find_by id: params[:id]
 
-	user ? user.to_json : show_error('Not Found', 'There is no user with the specified UID', 404)
+	user ? user.to_json : show_error('Not Found', 'There is no user with the specified ID', 404)
+end
+
+get '/users/login/:username/?' do
+	content_type :json
+
+	user = User.find_by email: params[:username] + "@connections.mcdaniel.edu"
+
+	user ? { username: params[:username], api_key: user.api_token, id: user.id }.to_json : show_error('Not Found', 'There is no user with that username', 404)
 end
 
 ###
@@ -130,7 +147,7 @@ get '/users/:id/wanted_books' do
 
 	# Get user and return wanted books
 	user = User.find_by id: params[:id]
-	user ? user.desired_books.to_json : show_error('Not Found', 'There is no user with that id', 404)
+	user ? user.wanted_books.to_json : show_error('Not Found', 'There is no user with that id', 404)
 end
 
 post '/users/:id/wanted_books' do
@@ -156,6 +173,21 @@ get '/books/:id/desirers/?' do
 	book ? book.desirers.to_json : show_error('Not Found', 'There is no book with that id', 404)
 end
 
+delete '/wanted_books/:id/?' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	user = protect_request params[:key]
+
+	# Find book record
+	book = WantedBook.find_by id: params[:id]
+
+	# Ensure user making the request is the same as the user deleting the book
+	user = nil if book.user != user
+
+	user ? book.destroy! : show_error('Not Authenticated', 'The API key does not match the affected user', 401)
+end
+
 ###
 #	Owned Books
 ###
@@ -168,7 +200,8 @@ get '/users/:id/owned_books' do
 
 	# Get user and return wanted books
 	user = User.find_by id: params[:id]
-	user ? user.possessed_books.to_json : show_error('Not Found', 'There is no user with that id', 404)
+
+	user ? user.owned_books.to_json : show_error('Not Found', 'There is no user with that id', 404)
 end
 
 post '/users/:id/owned_books' do
@@ -183,6 +216,21 @@ post '/users/:id/owned_books' do
 	user ? OwnedBook.create(user_id: user.id, book_id: params[:book]) : show_error('Not Authenticated', 'The API key is missing or invalid or does not match the affected user', 401)
 end
 
+delete '/owned_books/:id/?' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	user = protect_request params[:key]
+
+	# Find book record
+	book = OwnedBook.find_by id: params[:id]
+
+	# Ensure user making the request is the same as the user deleting the book
+	user = nil if book.user != user
+
+	user ? book.destroy! : show_error('Not Authenticated', 'The API key does not match the affected user', 401)
+end
+
 get '/books/:id/owners/?' do
 	content_type :json
 
@@ -192,6 +240,68 @@ get '/books/:id/owners/?' do
 	book = Book.find_by id: params[:id]
 
 	book ? book.owners.to_json : show_error('Not Found', 'There is no book with that id', 404)
+end
+
+###
+#	Trades
+###
+
+get '/users/:id/trades/?' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	protect_request params[:key]
+
+	# Find user
+	user = User.find_by id: params[:id]
+
+	user ? user.trades.to_json : show_error('Not Found', 'There is no user with that id', 404)
+end
+
+post '/users/:id/trades/?' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	user = protect_request params[:key]
+
+	# Find user
+	trader = User.find_by id: params[:id]
+
+	# Ensure user making the request is the same as trade maker
+	user = nil if trader.id != user.id
+
+	if user
+		Trade.create sender_id: user.id,
+			receiver_id: params[:receiver],
+			sender_books: [params[:your_book]],
+			receiver_books: [params[:their_book]]
+	else
+		show_error('Not Authenticated', 'The API key does not match the affected user', 401)
+	end
+end
+
+get '/users/:id/trades/suggest/?' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	protect_request params[:key]
+
+	# Find user
+	user = User.find_by id: params[:id]
+
+	user ? Trade.suggest_for_user(user).to_json : show_error('Not Found', 'There is no user with that id', 404)
+end
+
+delete '/trades/:id/?' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	protect_request params[:key]
+
+	# Find trade
+	trade = Trade.find_by id: params[:id]
+
+	trade ? trade.destroy : show_error('Not Found', 'There is no trade with that id', 404)
 end
 
 ###
