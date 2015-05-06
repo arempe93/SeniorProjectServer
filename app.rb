@@ -292,6 +292,18 @@ get '/users/:id/trades/suggest/?' do
 	user ? Trade.suggest_for_user(user).to_json : show_error('Not Found', 'There is no user with that id', 404)
 end
 
+delete '/trades/:id/?' do
+	content_type :json
+
+	# Ensure this request is authenticated
+	protect_request params[:key]
+
+	# Find trade
+	trade = Trade.find_by id: params[:id]
+
+	trade ? trade.destroy : show_error('Not Found', 'There is no trade with that id', 404)
+end
+
 ###
 #	Errors
 ###
